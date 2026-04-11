@@ -3,7 +3,7 @@
 Projekt wykrywania phishingowych adresow URL oparty o **XGBoost**, z mozliwoscia porownania wynikow z **Decision Tree** i **SVM**.
 
 ## Zakres
-- przygotowanie danych (lokalny CSV albo automatyczne pobranie UCI dataset ID 967),
+- przygotowanie danych z pliku CSV,
 - ekstrakcja cech URL (dlugosc, znaki specjalne, IP w host, TLD itd.),
 - trening i walidacja modelu XGBoost,
 - metryki: accuracy, precision, recall, F1, ROC-AUC,
@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ```
 
 ## Uruchomienie
-1. Trening XGBoost na UCI dataset:
+1. Trening XGBoost na domyslnym pliku:
 ```bash
 python main.py
 ```
@@ -29,6 +29,8 @@ python main.py --compare
 ```bash
 python main.py --csv sciezka_do_pliku.csv --compare
 ```
+
+Domyslny plik: `data/PhiUSIIL_Phishing_URL_Dataset.csv`
 
 ## Wymagany format danych CSV
 - kolumna etykiety o nazwie jednej z: `label`, `class`, `target`, `result`, `status`, `phishing`,

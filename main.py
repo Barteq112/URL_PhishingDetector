@@ -42,6 +42,7 @@ SUSPICIOUS_TLDS = {
 
 LABEL_CANDIDATES = ("label", "class", "target", "result", "status", "phishing")
 URL_CANDIDATES = ("url", "uri", "link", "domain", "website")
+DEFAULT_DATA_PATH = "data\\PhiUSIIL_Phishing_URL_Dataset.csv"
 
 
 def shannon_entropy(value: str) -> float:
@@ -131,33 +132,17 @@ def encode_labels(y: pd.Series) -> pd.Series:
     return normalized.map(inferred).astype(int)
 
 
-def load_data_from_uci() -> Tuple[pd.DataFrame, pd.Series]:
-    from ucimlrepo import fetch_ucirepo
-
-    dataset = fetch_ucirepo(id=967)
-    features = dataset.data.features.copy()
-    targets = dataset.data.targets.copy()
-    label_col = infer_column(targets.columns, LABEL_CANDIDATES) or targets.columns[0]
-
-    y = encode_labels(targets[label_col])
-    X = features.copy()
+def load_data(csv_path: str) -> Tuple[pd.DataFrame, pd.Series]:
+    frame = pd.read_csv(csv_path)
+    label_col = infer_column(frame.columns, LABEL_CANDIDATES)
+    if not label_col:
+        raise ValueError(
+            "Nie znaleziono kolumny etykiet. Oczekiwane nazwy: "
+            + ", ".join(LABEL_CANDIDATES)
+        )
+    y = encode_labels(frame[label_col])
+    X = frame.drop(columns=[label_col]).copy()
     return X, y
-
-
-def load_data(csv_path: str | None) -> Tuple[pd.DataFrame, pd.Series]:
-    if csv_path:
-        frame = pd.read_csv(csv_path)
-        label_col = infer_column(frame.columns, LABEL_CANDIDATES)
-        if not label_col:
-            raise ValueError(
-                "Nie znaleziono kolumny etykiet. Oczekiwane nazwy: "
-                + ", ".join(LABEL_CANDIDATES)
-            )
-        y = encode_labels(frame[label_col])
-        X = frame.drop(columns=[label_col]).copy()
-        return X, y
-
-    return load_data_from_uci()
 
 
 def build_feature_matrix(
@@ -277,8 +262,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--csv",
         type=str,
-        default=None,
-        help="Sciezka do lokalnego pliku CSV z danymi (opcjonalnie).",
+        default=DEFAULT_DATA_PATH,
+        help=f"Sciezka do pliku CSV z danymi (domyslnie: {DEFAULT_DATA_PATH}).",
     )
     parser.add_argument(
         "--compare",
