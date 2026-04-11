@@ -1,60 +1,39 @@
 # URL_PhishingDetector
 
-Projekt wykrywania phishingowych adresow URL oparty o **XGBoost**, z mozliwoscia porownania wynikow z **Decision Tree** i **SVM**.
+Modulowy pipeline ekstrakcji cech z URL zbudowany wg schematu:
+**parse URL -> domain details -> DNS info -> redirection check -> IP resolution -> character patterns -> auth/keyword detection -> TLD features -> extra features**.
 
-## Zakres
-- przygotowanie danych z pliku CSV,
-- ekstrakcja cech URL (dlugosc, znaki specjalne, IP w host, TLD itd.),
-- podzial danych na zbiory: uczacy, walidacyjny i testowy,
-- trening, walidacja i zapis modelu XGBoost,
-- metryki: accuracy, precision, recall, F1, ROC-AUC,
-- opcjonalne porownanie z prostszymi klasyfikatorami,
-- wczytanie zapisanego modelu i predykcja bez ponownego uczenia,
-- automatyczne generowanie wykresow ewaluacyjnych.
+## Struktura
+- `main.py` - CLI dla pojedynczego URL i batch CSV
+- `url_pipeline\parsing.py` - parsowanie URL (domain/path/query/subdomain/TLD)
+- `url_pipeline\domain_features.py` - WHOIS (creation/expiration -> age/validity)
+- `url_pipeline\dns_features.py` - MX/SPF/TXT/NS
+- `url_pipeline\network_features.py` - redirect check + liczba rozwiazanych IP
+- `url_pipeline\lexical_features.py` - wzorce znakow, keywordy, TLD, extra
+- `url_pipeline\extractor.py` - orkiestracja calego pipeline
 
-## Wymagania
+## Instalacja
 ```bash
 pip install -r requirements.txt
 ```
 
-## Uruchomienie
-1. Trening XGBoost (uczenie + walidacja + test + zapis modelu):
+## Uzycie
+1. Pojedynczy URL (wynik JSON na stdout):
 ```bash
-python main.py
+python main.py --url "https://example.com/login?token=123"
 ```
 
-2. Trening + porownanie z Decision Tree i SVM:
+2. Pojedynczy URL z zapisem do pliku:
 ```bash
-python main.py --compare
+python main.py --url "https://example.com/login?token=123" --output output\features.json
 ```
 
-3. Uzycie wlasnego pliku CSV:
+3. Batch z CSV:
 ```bash
-python main.py --csv sciezka_do_pliku.csv --compare
+python main.py --input-csv data\PhiUSIIL_Phishing_URL_Dataset.csv --url-column URL --output output\features.csv
 ```
 
-Domyslny plik: `data/PhiUSIIL_Phishing_URL_Dataset.csv`
-
-4. Predykcja na podstawie zapisanego modelu (bez uczenia):
+4. Tylko cechy lokalne (bez zapytan sieciowych):
 ```bash
-python main.py --mode predict --model-path models\xgboost_phishing_model.pkl --csv data\PhiUSIIL_Phishing_URL_Dataset.csv --predictions-out predictions.csv
+python main.py --url "https://example.com" --no-network
 ```
-
-Domyslny model: `models\xgboost_phishing_model.pkl`
-
-5. Wlasny podzial i katalog wykresow:
-```bash
-python main.py --test-size 0.2 --val-size 0.2 --plots-dir plots --compare
-```
-
-Generowane wykresy (domyslnie w `plots\`):
-- `xgboost_confusion_matrix_test.png`
-- `xgboost_roc_curve_test.png`
-- `xgboost_pr_curve_test.png`
-- `xgboost_feature_importance.png`
-
-## Wymagany format danych CSV
-- kolumna etykiety o nazwie jednej z: `label`, `class`, `target`, `result`, `status`, `phishing`,
-- opcjonalnie kolumna URL o nazwie jednej z: `url`, `uri`, `link`, `domain`, `website`.
-
-Jesli URL nie ma, model uzyje dostepnych cech liczbowych.
