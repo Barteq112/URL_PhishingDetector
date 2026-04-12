@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import argparse
 import ipaddress
+import json
 import math
 import re
+from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+import pandas as pd
 import tldextract
 
 COMMON_TLDS = {
@@ -108,7 +112,16 @@ def _is_ip(host: str | None) -> int:
 
 def parse_url_features(url: str) -> dict[str, object]:
     normalized = normalize_url(url)
-    parsed = urlparse(normalized)
+    try:
+        parsed = urlparse(normalized)
+    except ValueError:
+        # Some datasets contain obfuscated hosts like "[.]" which break urllib parsing.
+        repaired = normalized.replace("[.]", ".").replace("[", "").replace("]", "")
+        try:
+            parsed = urlparse(repaired)
+            normalized = repaired
+        except ValueError:
+            parsed = urlparse("http://")
     host = parsed.hostname or ""
     extracted = tldextract.extract(host)
 
@@ -116,6 +129,10 @@ def parse_url_features(url: str) -> dict[str, object]:
     query_key_count = len(query_map)
     query_value_count = sum(len(values) for values in query_map.values())
     subdomain_count = len([part for part in extracted.subdomain.split(".") if part])
+    try:
+        port = parsed.port or 0
+    except ValueError:
+        port = 0
 
     return {
         "input_url": url,
@@ -125,7 +142,7 @@ def parse_url_features(url: str) -> dict[str, object]:
         "path": parsed.path or "",
         "query": parsed.query or "",
         "fragment": parsed.fragment or "",
-        "port": parsed.port or 0,
+        "port": port,
         "subdomain": extracted.subdomain or "",
         "registered_domain": extracted.domain or "",
         "tld": extracted.suffix or "",
@@ -271,3 +288,80 @@ def extract_features(url: str) -> dict[str, object]:
     )
 
     return features
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Pipeline ekstrakcji cech URL (parse -> pattern -> auth/keywords -> tld -> extra)."
+    )
+    parser.add_argument("--url", type=str, default=None, help="Pojedynczy URL do analizy.")
+    parser.add_argument("--input-csv", type=str, default=None, help="Plik CSV z URL-ami.")
+    parser.add_argument(
+        "--url-column",
+        type=str,
+        default="URL",
+        help="Nazwa kolumny URL w pliku CSV (domyslnie: URL).",
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Sciezka pliku wyjsciowego (JSON dla --url, CSV dla --input-csv).",
+    )
+    return parser.parse_args()
+
+
+def run_single_url(url: str, output: str | None) -> None:
+    features = extract_features(url=url)
+    payload = json.dumps(features, ensure_ascii=False, indent=2)
+    if output:
+        out_path = Path(output)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(payload, encoding="utf-8")
+        print(f"Zapisano cechy do: {out_path}")
+        return
+    print(payload)
+
+
+def run_csv(input_csv: str, url_column: str, output: str | None) -> None:
+    frame = pd.read_csv(input_csv)
+    if url_column not in frame.columns:
+        raise ValueError(f"Brak kolumny '{url_column}' w pliku: {input_csv}")
+
+    urls = frame[url_column].astype(str)
+    total = len(urls)
+    feature_rows: list[dict[str, object]] = []
+    for idx, value in enumerate(urls, start=1):
+        feature_rows.append(extract_features(value))
+        print(f"\rPrzetworzono linkow: {idx}/{total}", end="", flush=True)
+    print()
+
+    features_frame = pd.DataFrame(feature_rows)
+    merged = pd.concat([frame, features_frame], axis=1)
+
+    destination = output or "features_output.csv"
+    out_path = Path(destination)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    merged.to_csv(out_path, index=False)
+    print(f"Zapisano cechy dla {len(frame)} URL-i do: {out_path}")
+
+
+def main() -> None:
+    args = parse_args()
+    if not args.url and not args.input_csv:
+        raise ValueError("Podaj --url albo --input-csv.")
+    if args.url and args.input_csv:
+        raise ValueError("Uzyj tylko jednego trybu: --url albo --input-csv.")
+
+    if args.url:
+        run_single_url(url=args.url, output=args.output)
+        return
+    run_csv(
+        input_csv=args.input_csv,
+        url_column=args.url_column,
+        output=args.output,
+    )
+
+
+if __name__ == "__main__":
+    main()
