@@ -5,12 +5,8 @@ Modulowy pipeline ekstrakcji cech z URL zbudowany wg schematu:
 
 ## Struktura
 - `main.py` - CLI dla pojedynczego URL i batch CSV
-- `url_pipeline\parsing.py` - parsowanie URL (domain/path/query/subdomain/TLD)
-- `url_pipeline\domain_features.py` - WHOIS (creation/expiration -> age/validity)
-- `url_pipeline\dns_features.py` - MX/SPF/TXT/NS
-- `url_pipeline\network_features.py` - redirect check + liczba rozwiazanych IP
-- `url_pipeline\lexical_features.py` - wzorce znakow, keywordy, TLD, extra
-- `url_pipeline\extractor.py` - orkiestracja calego pipeline
+- `normalize_csv.py` - prosty skrypt do ujednolicenia CSV
+- `url_pipeline\extractor.py` - caly pipeline ekstrakcji cech w jednym pliku
 
 ## Instalacja
 ```bash
@@ -32,6 +28,19 @@ python main.py --url "https://example.com/login?token=123" --output output\featu
 ```bash
 python main.py --input-csv data\PhiUSIIL_Phishing_URL_Dataset.csv --url-column URL --output output\features.csv
 ```
+
+3a. Ujednolicenie kazdego CSV osobno:
+```bash
+python normalize_csv.py
+```
+
+Skrypt ma reczna liste `DATASETS` w `normalize_csv.py` - tam ustawiasz:
+- `input_csv`
+- `url_column`
+- `label_column`
+- `output_csv`
+
+Kazdy dataset zapisuje sie do osobnego pliku (kolumny: `URL,label`).
 
 4. Tylko cechy lokalne (bez zapytan sieciowych):
 ```bash
