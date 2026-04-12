@@ -5,8 +5,10 @@ import json
 from pathlib import Path
 
 import pandas as pd
+from skopt import BayesSearchCV
+from skopt.space import Integer, Real
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from xgboost import XGBClassifier
 
 LABEL_MAP = {
@@ -30,6 +32,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--test-size", type=float, default=0.2, help="Procent danych testowych (0-1).")
     parser.add_argument("--random-state", type=int, default=42, help="Seed losowania.")
+    parser.add_argument("--bayes-iter", type=int, default=100, help="Budzet ewaluacji BayesSearchCV.")
+    parser.add_argument("--cv-folds", type=int, default=5, help="Liczba foldow Stratified CV.")
     return parser.parse_args()
 
 
@@ -50,7 +54,9 @@ def train_xgboost(
     output_metrics: str,
     test_size: float,
     random_state: int,
-) -> dict[str, float | int]:
+    bayes_iter: int,
+    cv_folds: int,
+) -> dict[str, object]:
     frame = pd.read_csv(input_csv)
     if label_column not in frame.columns:
         raise ValueError(f"Brak kolumny etykiety '{label_column}' w pliku: {input_csv}")
@@ -76,22 +82,41 @@ def train_xgboost(
     )
 
     model = XGBClassifier(
-        n_estimators=300,
-        max_depth=6,
-        learning_rate=0.05,
-        subsample=0.9,
-        colsample_bytree=0.9,
+        objective="binary:logistic",
         eval_metric="logloss",
         random_state=random_state,
         n_jobs=-1,
         tree_method="hist",
     )
-    model.fit(x_train, y_train)
+    search_spaces = {
+        "n_estimators": Integer(100, 1200),
+        "max_depth": Integer(3, 12),
+        "learning_rate": Real(0.01, 0.3, prior="log-uniform"),
+        "subsample": Real(0.5, 1.0),
+        "colsample_bytree": Real(0.5, 1.0),
+        "min_child_weight": Integer(1, 20),
+        "gamma": Real(1e-8, 10.0, prior="log-uniform"),
+        "reg_alpha": Real(1e-8, 10.0, prior="log-uniform"),
+        "reg_lambda": Real(1e-8, 10.0, prior="log-uniform"),
+    }
+    cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=random_state)
+    tuner = BayesSearchCV(
+        estimator=model,
+        search_spaces=search_spaces,
+        n_iter=bayes_iter,
+        scoring="roc_auc",
+        cv=cv,
+        n_jobs=-1,
+        random_state=random_state,
+        refit=True,
+    )
+    tuner.fit(x_train, y_train)
+    model = tuner.best_estimator_
 
     y_pred = model.predict(x_test)
     y_proba = model.predict_proba(x_test)[:, 1]
 
-    metrics: dict[str, float | int] = {
+    metrics: dict[str, object] = {
         "rows_total": int(len(frame)),
         "rows_train": int(len(x_train)),
         "rows_test": int(len(x_test)),
@@ -101,7 +126,12 @@ def train_xgboost(
         "recall": float(recall_score(y_test, y_pred, zero_division=0)),
         "f1": float(f1_score(y_test, y_pred, zero_division=0)),
         "roc_auc": float(roc_auc_score(y_test, y_proba)),
+        "bayes_best_cv_score": float(tuner.best_score_),
+        "bayes_iter": int(bayes_iter),
+        "cv_folds": int(cv_folds),
+        "n_jobs": int(-1),
     }
+    metrics["best_params"] = {key: value for key, value in tuner.best_params_.items()}
 
     model_path = Path(output_model)
     model_path.parent.mkdir(parents=True, exist_ok=True)
@@ -126,6 +156,8 @@ def main() -> None:
         output_metrics=args.output_metrics,
         test_size=args.test_size,
         random_state=args.random_state,
+        bayes_iter=args.bayes_iter,
+        cv_folds=args.cv_folds,
     )
     print(f"Model zapisany do: {args.output_model}")
     print(f"Metryki zapisane do: {args.output_metrics}")

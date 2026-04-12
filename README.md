@@ -49,6 +49,12 @@ Kazdy dataset zapisuje sie do osobnego pliku (kolumny: `URL,label`).
 python -m url_pipeline.train_xgboost --input-csv output\url_dataset_features.csv --label-column label --output-model output\xgboost_model.json --output-metrics output\xgboost_metrics.json
 ```
 
+Trening uzywa BayesSearchCV (scikit-optimize): stratified 5-fold CV, budzet 100 ewaluacji, `n_jobs=-1`.
+Mozesz zmienic parametry:
+```bash
+python -m url_pipeline.train_xgboost --input-csv output\url_dataset_features.csv --label-column label --bayes-iter 100 --cv-folds 5
+```
+
 5. Predykcja wytrenowanym modelem (bez uczenia):
 ```bash
 python -m url_pipeline.predict_xgboost --input-csv output\url_dataset_features.csv --model-path output\xgboost_model.json --features-file output\xgboost_metrics_features.json --label-column label --output-csv output\url_dataset_predictions.csv

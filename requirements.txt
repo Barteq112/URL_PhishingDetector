@@ -1,6 +1,7 @@
 numpy>=1.26
 pandas>=2.2
 scikit-learn>=1.5
+scikit-optimize>=0.10
 xgboost>=2.1
 scipy>=1.13
 matplotlib>=3.9
