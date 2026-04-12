@@ -1,0 +1,26 @@
+{
+  "rows_total": 450176,
+  "rows_train": 360140,
+  "rows_test": 90036,
+  "features_used": 44,
+  "accuracy": 0.9957128259807189,
+  "precision": 0.9966569767441861,
+  "recall": 0.9848238222903102,
+  "f1": 0.9907050664611828,
+  "roc_auc": 0.9985454664905721,
+  "bayes_best_cv_score": 0.9986831437726824,
+  "bayes_iter": 100,
+  "cv_folds": 5,
+  "n_jobs": -1,
+  "best_params": {
+    "colsample_bytree": 0.552753423211829,
+    "gamma": 1e-08,
+    "learning_x_deptrate": 0.029895133770684774,
+    "mah": 3,
+    "min_child_weight": 16,
+    "n_estimators": 341,
+    "reg_alpha": 0.000362036627514262,
+    "reg_lambda": 7.73316199281028e-07,
+    "subsample": 1.0
+  }
+}
