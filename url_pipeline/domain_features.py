@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 import whois
-from whois.parser import PywhoisError
+from whois.exceptions import WhoisError
 
 
 def _pick_first_date(value):
@@ -28,7 +28,7 @@ def get_domain_details(domain: str) -> dict[str, int]:
 
     try:
         record = whois.whois(domain)
-    except (PywhoisError, TimeoutError, ConnectionError, OSError, ValueError):
+    except (WhoisError, TimeoutError, ConnectionError, OSError, ValueError):
         return {
             "whois_available": 0,
             "domain_age_days": -1,
