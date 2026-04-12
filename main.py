@@ -11,7 +11,7 @@ from url_pipeline.extractor import extract_features
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Pipeline ekstrakcji cech URL (parse -> domain -> dns -> redirect -> ip -> pattern -> auth/keywords -> tld -> extra)."
+        description="Pipeline ekstrakcji cech URL (parse -> pattern -> auth/keywords -> tld -> extra)."
     )
     parser.add_argument("--url", type=str, default=None, help="Pojedynczy URL do analizy.")
     parser.add_argument("--input-csv", type=str, default=None, help="Plik CSV z URL-ami.")
@@ -27,16 +27,11 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Sciezka pliku wyjsciowego (JSON dla --url, CSV dla --input-csv).",
     )
-    parser.add_argument(
-        "--no-network",
-        action="store_true",
-        help="Pomin cechy sieciowe (WHOIS, DNS, redirect, IP resolution).",
-    )
     return parser.parse_args()
 
 
-def run_single_url(url: str, output: str | None, enable_network: bool) -> None:
-    features = extract_features(url=url, enable_network=enable_network)
+def run_single_url(url: str, output: str | None) -> None:
+    features = extract_features(url=url)
     payload = json.dumps(features, ensure_ascii=False, indent=2)
     if output:
         out_path = Path(output)
@@ -47,14 +42,20 @@ def run_single_url(url: str, output: str | None, enable_network: bool) -> None:
     print(payload)
 
 
-def run_csv(input_csv: str, url_column: str, output: str | None, enable_network: bool) -> None:
+def run_csv(input_csv: str, url_column: str, output: str | None) -> None:
     frame = pd.read_csv(input_csv)
     if url_column not in frame.columns:
         raise ValueError(f"Brak kolumny '{url_column}' w pliku: {input_csv}")
 
-    features_frame = frame[url_column].astype(str).apply(
-        lambda value: pd.Series(extract_features(value, enable_network=enable_network))
-    )
+    urls = frame[url_column].astype(str)
+    total = len(urls)
+    feature_rows: list[dict[str, object]] = []
+    for idx, value in enumerate(urls, start=1):
+        feature_rows.append(extract_features(value))
+        print(f"\rPrzetworzono linkow: {idx}/{total}", end="", flush=True)
+    print()
+
+    features_frame = pd.DataFrame(feature_rows)
     merged = pd.concat([frame, features_frame], axis=1)
 
     destination = output or "features_output.csv"
@@ -71,15 +72,13 @@ def main() -> None:
     if args.url and args.input_csv:
         raise ValueError("Uzyj tylko jednego trybu: --url albo --input-csv.")
 
-    enable_network = not args.no_network
     if args.url:
-        run_single_url(url=args.url, output=args.output, enable_network=enable_network)
+        run_single_url(url=args.url, output=args.output)
         return
     run_csv(
         input_csv=args.input_csv,
         url_column=args.url_column,
         output=args.output,
-        enable_network=enable_network,
     )
 
 

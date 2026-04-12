@@ -1,7 +1,7 @@
 # URL_PhishingDetector
 
-Modulowy pipeline ekstrakcji cech z URL zbudowany wg schematu:
-**parse URL -> domain details -> DNS info -> redirection check -> IP resolution -> character patterns -> auth/keyword detection -> TLD features -> extra features**.
+Pipeline ekstrakcji cech z URL zbudowany wg schematu:
+**parse URL -> character patterns -> auth/keyword detection -> TLD features -> extra features**.
 
 ## Struktura
 - `main.py` - CLI dla pojedynczego URL i batch CSV
@@ -42,7 +42,3 @@ Skrypt ma reczna liste `DATASETS` w `normalize_csv.py` - tam ustawiasz:
 
 Kazdy dataset zapisuje sie do osobnego pliku (kolumny: `URL,label`).
 
-4. Tylko cechy lokalne (bez zapytan sieciowych):
-```bash
-python main.py --url "https://example.com" --no-network
-```
