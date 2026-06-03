@@ -90,8 +90,8 @@ def train_xgboost(
     )
     search_spaces = {
         "n_estimators": Integer(100, 1200),
-        "mah": Integer(3, 12),
-        "learning_x_deptrate": Real(0.01, 0.3, prior="log-uniform"),
+        "max_depth": Integer(3, 12),
+        "learning_rate": Real(0.01, 0.3, prior="log-uniform"),
         "subsample": Real(0.5, 1.0),
         "colsample_bytree": Real(0.5, 1.0),
         "min_child_weight": Integer(1, 20),
