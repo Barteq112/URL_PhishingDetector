@@ -1,0 +1,354 @@
+[
+  {
+    "feature":"is_https",
+    "label_pl":"HTTPS",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":8866.9228515625,
+    "gain_pct":72.8510765489
+  },
+  {
+    "feature":"subdomain_count",
+    "label_pl":"Liczba subdomen",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":1299.4715576172,
+    "gain_pct":10.6765225662
+  },
+  {
+    "feature":"subdomain_count_feature",
+    "label_pl":"Subdomeny (cecha)",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":757.5165405273,
+    "gain_pct":6.2237933503
+  },
+  {
+    "feature":"suspicious_keyword_count",
+    "label_pl":"Słowa podejrzane (liczba)",
+    "group":"słownik",
+    "group_pl":"Słowa kluczowe",
+    "gain":347.1023864746,
+    "gain_pct":2.8518103688
+  },
+  {
+    "feature":"tld_is_common",
+    "label_pl":"Typowe TLD",
+    "group":"tld",
+    "group_pl":"TLD \/ domena",
+    "gain":146.3277893066,
+    "gain_pct":1.2022363517
+  },
+  {
+    "feature":"contains_secure_keyword",
+    "label_pl":"Słowo: secure",
+    "group":"słownik",
+    "group_pl":"Słowa kluczowe",
+    "gain":139.9281158447,
+    "gain_pct":1.1496563181
+  },
+  {
+    "feature":"port",
+    "label_pl":"Port w URL",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":96.6540527344,
+    "gain_pct":0.7941144761
+  },
+  {
+    "feature":"contains_login_keyword",
+    "label_pl":"Słowo: login",
+    "group":"słownik",
+    "group_pl":"Słowa kluczowe",
+    "gain":69.4852676392,
+    "gain_pct":0.5708943944
+  },
+  {
+    "feature":"tld_length",
+    "label_pl":"Długość TLD",
+    "group":"tld",
+    "group_pl":"TLD \/ domena",
+    "gain":55.5250053406,
+    "gain_pct":0.4561961892
+  },
+  {
+    "feature":"has_brand_keyword",
+    "label_pl":"Słowa marek",
+    "group":"słownik",
+    "group_pl":"Słowa kluczowe",
+    "gain":48.4274330139,
+    "gain_pct":0.397882184
+  },
+  {
+    "feature":"qty_hyphen_path",
+    "label_pl":"Myślniki w ścieżce",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":38.7962226868,
+    "gain_pct":0.3187516838
+  },
+  {
+    "feature":"qty_dot_url",
+    "label_pl":"Kropki w URL",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":36.8874130249,
+    "gain_pct":0.3030688092
+  },
+  {
+    "feature":"contains_token_keyword",
+    "label_pl":"Słowo: token",
+    "group":"słownik",
+    "group_pl":"Słowa kluczowe",
+    "gain":36.1347465515,
+    "gain_pct":0.2968848642
+  },
+  {
+    "feature":"dot_count",
+    "label_pl":"Liczba kropek",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":27.526058197,
+    "gain_pct":0.2261554551
+  },
+  {
+    "feature":"digit_count",
+    "label_pl":"Liczba cyfr",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":21.2136611938,
+    "gain_pct":0.1742924892
+  },
+  {
+    "feature":"at_count",
+    "label_pl":"Znak @",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":18.169921875,
+    "gain_pct":0.1492849765
+  },
+  {
+    "feature":"special_char_count",
+    "label_pl":"Znaki specjalne",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":15.1395635605,
+    "gain_pct":0.1243874027
+  },
+  {
+    "feature":"underscore_count",
+    "label_pl":"Podkreślenia",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":14.0870218277,
+    "gain_pct":0.1157396678
+  },
+  {
+    "feature":"slash_count",
+    "label_pl":"Ukośniki",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":14.0293331146,
+    "gain_pct":0.1152656945
+  },
+  {
+    "feature":"domain_length",
+    "label_pl":"Długość domeny",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":12.9724464417,
+    "gain_pct":0.1065822614
+  },
+  {
+    "feature":"length_url",
+    "label_pl":"Długość URL (alt.)",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":10.7629499435,
+    "gain_pct":0.0884289289
+  },
+  {
+    "feature":"special_char_ratio",
+    "label_pl":"Udział znaków spec.",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":10.4641447067,
+    "gain_pct":0.0859739303
+  },
+  {
+    "feature":"url_entropy",
+    "label_pl":"Entropia URL",
+    "group":"entropia",
+    "group_pl":"Entropia",
+    "gain":9.0514659882,
+    "gain_pct":0.0743672921
+  },
+  {
+    "feature":"hyphen_count",
+    "label_pl":"Myślniki",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":8.8476324081,
+    "gain_pct":0.0726925853
+  },
+  {
+    "feature":"digit_ratio",
+    "label_pl":"Udział cyfr",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":8.812171936,
+    "gain_pct":0.0724012403
+  },
+  {
+    "feature":"question_mark_count",
+    "label_pl":"Znak ?",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":8.7791852951,
+    "gain_pct":0.0721302204
+  },
+  {
+    "feature":"query_value_count",
+    "label_pl":"Wartości zapytania",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":8.2991495132,
+    "gain_pct":0.0681862227
+  },
+  {
+    "feature":"query_length",
+    "label_pl":"Długość zapytania",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":7.8402876854,
+    "gain_pct":0.0644161913
+  },
+  {
+    "feature":"ampersand_count",
+    "label_pl":"Znak &",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":6.6731419563,
+    "gain_pct":0.0548268642
+  },
+  {
+    "feature":"path_length",
+    "label_pl":"Długość ścieżki",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":6.5955781937,
+    "gain_pct":0.0541895965
+  },
+  {
+    "feature":"query_param_count",
+    "label_pl":"Parametry zapytania",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":5.1087579727,
+    "gain_pct":0.0419738081
+  },
+  {
+    "feature":"equal_count",
+    "label_pl":"Znak =",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":4.7693352699,
+    "gain_pct":0.0391850944
+  },
+  {
+    "feature":"percent_count",
+    "label_pl":"Znak %",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":4.4447131157,
+    "gain_pct":0.0365179827
+  },
+  {
+    "feature":"letter_count",
+    "label_pl":"Litery",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":4.3750367165,
+    "gain_pct":0.035945518
+  },
+  {
+    "feature":"url_length",
+    "label_pl":"Długość URL",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":4.1580529213,
+    "gain_pct":0.0341627684
+  },
+  {
+    "feature":"is_domain_ip",
+    "label_pl":"Domena = IP",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":0.0006942749,
+    "gain_pct":0.0000057042
+  },
+  {
+    "feature":"has_auth_section",
+    "label_pl":"Sekcja auth",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":0.0,
+    "gain_pct":0.0
+  },
+  {
+    "feature":"has_userinfo",
+    "label_pl":"Dane w URL (userinfo)",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":0.0,
+    "gain_pct":0.0
+  },
+  {
+    "feature":"subdomain_auth_count",
+    "label_pl":"Auth w subdomenie",
+    "group":"słownik",
+    "group_pl":"Słowa kluczowe",
+    "gain":0.0,
+    "gain_pct":0.0
+  },
+  {
+    "feature":"has_long_repeated_char_sequence",
+    "label_pl":"Powtórzenia znaków",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":0.0,
+    "gain_pct":0.0
+  },
+  {
+    "feature":"tld_is_suspicious",
+    "label_pl":"Podejrzane TLD",
+    "group":"tld",
+    "group_pl":"TLD \/ domena",
+    "gain":0.0,
+    "gain_pct":0.0
+  },
+  {
+    "feature":"is_shortened_url",
+    "label_pl":"Skracacz URL",
+    "group":"tld",
+    "group_pl":"TLD \/ domena",
+    "gain":0.0,
+    "gain_pct":0.0
+  },
+  {
+    "feature":"contains_punycode",
+    "label_pl":"Punycode (xn--)",
+    "group":"wzorce",
+    "group_pl":"Wzorce znakowe",
+    "gain":0.0,
+    "gain_pct":0.0
+  },
+  {
+    "feature":"is_domain_ip_feature",
+    "label_pl":"IP (cecha)",
+    "group":"struktura",
+    "group_pl":"Struktura URL",
+    "gain":0.0,
+    "gain_pct":0.0
+  }
+]
