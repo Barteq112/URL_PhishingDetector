@@ -62,9 +62,4 @@ python -m url_pipeline.predict_xgboost --input-csv output\url_dataset_features.c
 
 Jesli w danych jest kolumna etykiety (`label-column`), skrypt wypisze dokladnosc predykcji (accuracy, precision, recall, f1, roc_auc).
 
-6. Waznosc cech modelu (wykres gain dla artykulu):
-```bash
-python analyze_feature_importance.py
-```
-Wyniki: `analysis/analysis/results_04_*.png`, `results_05_*.png`; kopie do `docs/feature_importance_top20.png` i `docs/feature_importance_by_group.png`.
 
